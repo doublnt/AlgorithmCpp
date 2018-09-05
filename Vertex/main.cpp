@@ -189,6 +189,12 @@ int DFSTrave(AGraph *G, int i, int j) {
         return 0;
 }
 
+/*最小生成树Prim ,O(n^2) 适用于稠密图
+从图中任意取出一个顶点，把它当成一棵树，然后从与这棵树相接的边中选取一条最短（权值最小）
+的边，并将这条边及其所连接的顶点也并入这棵树中，此时得到了一颗有两个顶点的树。然后从与
+这棵树相接的边中选取一条最短的边，并将这条边及其所连顶点并入当前树中，得到一颗有3个顶点
+的树。以此类推，知道所有顶点都被并入树中为止。
+*/
 void Prim(MGraph g, int v0, int &sum) {
     int lowcost[maxSize], vset[maxSize], v;
     int i, j, k, min;
@@ -226,6 +232,8 @@ void Prim(MGraph g, int v0, int &sum) {
 }
 
 #pragma region Kruskal
+/*每次找出侯选边中权值最小的边，就将该边并入生成树中，重复此过程直到所有边都被检测完为止。
+*/
 typedef struct {
     int a, b;
     int w;
