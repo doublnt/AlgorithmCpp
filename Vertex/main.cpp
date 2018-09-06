@@ -1,7 +1,9 @@
 #include <iostream>
 #define maxSize 100
 #define INF 99999
-/* run this program using the console pauser or add your own getch, system("pause") or input loop */
+/* run this program using the console pauser or add your own getch,
+system("pause") or input loop */
+
 using namespace std;
 
 #pragma region 邻接矩阵的定义
@@ -41,7 +43,7 @@ void Visit(int v) {
     cout << v << " " << endl;
 }
 
-/*
+/* 深度优先搜索遍历
 首先从某个顶点v出发，访问该顶点，并标记为已访问过 
 然后选取与v邻接的各个未被访问的邻接点 W，并访问之。 
 再选取与 W 邻接的未被访问的任意顶点并访问之， 依次
@@ -72,12 +74,11 @@ void preorder(BTNode *p){
 }
 */
 
-/*可结合二叉树的层次遍历
-广度优先：
+/*
+广度优先搜索遍历：（可结合二叉树的层次遍历 来理解）
 首先访问起始顶点 v,然后选取与 v 邻接的全部顶点 w1， w2，。。。wn进行访问，
 再依次访问与 w1，w2， 。。。wn邻接的全部顶点（已经访问过的除外）
 */
-
 void BFS(AGraph *G, int v, int visit[maxSize]) { //visit array all  element initialize 0
     ArcNode *p;
     int que[maxSize], front = 0 , rear = 0; //队列定义的简单写法
@@ -232,7 +233,9 @@ void Prim(MGraph g, int v0, int &sum) {
 }
 
 #pragma region Kruskal
-/*每次找出侯选边中权值最小的边，就将该边并入生成树中，重复此过程直到所有边都被检测完为止。
+/*克鲁斯卡尔，适用于 稀疏图
+每次找出侯选边中权值最小的边，
+就将该边并入生成树中，重复此过程直到所有边都被检测完为止。
 */
 typedef struct {
     int a, b;
@@ -272,6 +275,15 @@ void Kruskal(MGraph g, int &sum, Road road[]) {
 #pragma endregion
 
 #pragma region Dijkstra o(n^2)
+/*
+用于求某一顶点到其余各顶点的最短路径：
+思想：设有两个顶点集合 S 和 T， 集合 S 中存放图中已找到的最短路径的顶点，
+集合 T 存放图中剩余顶点。
+初始状态时，集合 S 中只包含源点 v0，然后不断从集合 T 中选取到 v0 路径长度
+最短的顶点 Vu 并入到集合 S 中。
+集合 S 每并入一个新的顶点 Vu,都要修改顶点 V0 到集合 T 中顶点的最短路径长度值。
+不断重复此过程，直到集合 T 的顶点全部并入到 S 中为止。
+*/
 void printPath(int path[], int a) {
     int stack[maxSize], top = -1;
 
@@ -284,7 +296,7 @@ void printPath(int path[], int a) {
     stack[++top] = a;
 
     while(top != -1)
-        cout << stack[top--] << " ";
+        cout << stack[top--] << " ";//出栈逆序打印顶点
 
     cout << endl;
 }
@@ -292,7 +304,7 @@ void printPath(int path[], int a) {
 void Dijkstra(MGraph g, int v, int dist[], int path[]) {
     int set[maxSize];
     int min, i, j, u;
-
+    #pragma region 各数组初始化
     for(i = 0; i < g.n; ++i) {
         dist[i] = g.edges[v][i];
         set[i] = 0;
@@ -305,10 +317,14 @@ void Dijkstra(MGraph g, int v, int dist[], int path[]) {
 
     set[v] = 1;
     path[v] = -1;
+	#pragma endregion
 
     for(i = 0; i < g.n - 1; ++i) {
         min = INF;
-
+		/*
+        每次从剩余顶点中选出一个顶点，通往这个顶点的路径在通往所有剩余顶点的路径中是
+        长度最短的。
+		*/
         for(j = 0; j < g.n; ++j) {
             if(set[j] == 0 && dist[j] < min) {
                 u = j;
@@ -316,9 +332,13 @@ void Dijkstra(MGraph g, int v, int dist[], int path[]) {
             }
         }
 
-        set[u] = 1;
-
+        set[u] = 1;//将选出的节点并入最短路径中
+		/*
+        以刚并入的顶点作为中间点，对所有通往剩余顶点的路径进行检测
+		*/
         for(j = 0; j < g.n; ++j) {
+			//判断顶点 u 的加入是否会出现通往顶点 j 的更短的路径，如果出现，
+			//则改变原来路劲及其长度，否则什么都不做。
             if(set[j] == 0 && dist[u] + g.edges[u][j] < dist[j]) {
                 dist[j] = dist[u] + g.edges[u][j];
                 path[j] = u;
@@ -326,9 +346,12 @@ void Dijkstra(MGraph g, int v, int dist[], int path[]) {
         }
     }
 }
+//函数结束时， dist[] 数组中存放了 v 点到其余顶点的最短路径长度，path[] 中存放 v
+//点到其余各顶点的最短路径
 #pragma endregion
 
 #pragma region Floyd
+//求图中任一对顶点间的最短路径。
 
 void printPath(int u, int v, int path[][maxSize]){
 	if(path[u][v] == -1)
@@ -361,6 +384,51 @@ void Floyd(MGraph g, int Path[][maxSize]) {
     		}
     	}
     }
+}
+#pragma endregion
+
+#pragma region AOV
+/*对一个有向无环图进行拓扑排序,是将 G 中所有顶点排成一个线性序列，使得图中
+任意一对顶点 u 和 v，若存在由 u 到 v 的路径，则在拓扑排序序列中一定是 u 出现
+在 v 的前面
+*/
+typedef struct{
+	char data;
+	int count;
+	ArcNode *firstarc;
+};
+
+int TopSort(AGraph *G){
+	int i, j, n = 0;
+	int stack[maxSize], top = -1;
+	ArcNode *p;
+	#pragma region 将图中入度为 0 的顶点入栈
+	for(i = 0; i < G -> n; ++i){
+		if(G -> adjlist[i].count == 0){
+			stack[++top] = i;
+		}
+	}
+	while(top != -1){
+		i = stack[top--];
+		++n;
+		cout << i << " ";
+		p = G -> adjlist[i].firstarc;
+		//这个循环实现了将所有由此顶点引出的边所指向的顶点的入度都减少 1，
+		//并将这个过程中入度都变为 0 的顶点入栈
+		while(p != NULL){
+			j = p -> adjvex;
+			--(G -> adjlist[j].count);
+			if(G -> adjlist[j].count == 0){
+				stack[++top] = j;
+			}
+			p = p -> nextarc;
+		}
+	}
+	#pragme endregion
+	if(n == G -> n)
+		return 1;
+	else
+		return 0;
 }
 #pragma endregion
 
