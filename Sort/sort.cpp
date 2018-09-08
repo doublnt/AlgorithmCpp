@@ -1,6 +1,5 @@
 #define maxSize 100
 #include<iostream>
-
 using namespace std;
 
 #pragma region ≤Â»Î¿‡≈≈–Ú
