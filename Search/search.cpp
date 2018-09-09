@@ -111,6 +111,53 @@ LL RR LR RL
 */
 #pargma endregion
 
+#pragma region B- 树
+/*
+B- 树中所有结点孩子结点个数的最大值称为 B- 树的阶，通常 m >= 3,
+B- 树是 平衡 m 叉查找树
+具有 n 个关键字的结点含有 n+1 个分支
+*/
+
+#pragme endregion
+
+#pragma region B+ 树
+/*
+具有 n 个关键字的结点含有 n 个分支
+*/
+#pragma endregion
+
+#pragma region 散列表
+/*
+根据给定关键字来计算关键字在表中的地址，关键字 和 地址间有一一对应关系。
+
+*/
+
+#pragma endregion
+
+
+#pragma region 判断给定的二叉树是否是二叉排序树
+/*
+思想：对二叉排序树来说，其中序遍历序列为递增有序序列。因此，
+对给定的二叉树进行中序遍历，如果能保证前一个值不比后一个值大，
+则说明该二叉树是一颗二叉排序树
+
+*/
+int predt = INF;
+int judBST(BTNode *bt){
+	int b1,b2;
+	if(bt == NULL)
+		return 1;
+	else{
+		b1 = judBST(bt -> lchild);
+		if(b1 == 0 || predt > bt -> data)//左子树不是二叉排序树或者
+			return 0;                   //predt 大于当前根节点值，则该
+		predt = bt -> data;             //树不是二叉排序树
+		b2 = judBST(bt -> rchild);
+		return b2;
+	}
+}
+
+#pragma endregion
 
 
 
