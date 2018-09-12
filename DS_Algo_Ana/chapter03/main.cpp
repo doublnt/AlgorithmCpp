@@ -53,7 +53,10 @@ void PrintList(LNode *p, int n) {
     cout << "\n" << endl;
 }
 
-//首先要找到单链表的前元素，然后再作交换
+/*
+首先要找到单链表的前元素，然后再作交换
+交换 p 和 p -> next 的位置
+*/
 void SwapLinkList(LNode *p, LNode *L) {
     LNode *q;
     LNode *beforeP, *afterP;
@@ -62,6 +65,7 @@ void SwapLinkList(LNode *p, LNode *L) {
 
     cout << "\n" << p -> data << endl; //For Test!
 
+	//找到  p 的前一个结点
     while(q != NULL) {
         if(q -> next == p)
             beforeP = q;
@@ -72,9 +76,15 @@ void SwapLinkList(LNode *p, LNode *L) {
     cout << "\n" << beforeP -> data << endl; //For Test!
 
 	//Swap two element
-    p -> next = afterP -> next;
-    beforeP -> next = afterP ;
-    afterP -> next = p;
+   // p -> next = afterP -> next;
+//    beforeP -> next = afterP ;
+//    afterP -> next = p;
+
+	//上下两者一样, 画图来理解.
+
+	beforeP -> next = p -> next;
+	p -> next = afterP -> next;
+	afterP -> next = p;
 }
 
 int main() {
