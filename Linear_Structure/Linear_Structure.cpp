@@ -65,7 +65,7 @@ void insertElem(SqList &L, int x) {
 在SqList L 的 p 位置上 插入 元素 e，插入成功返回 1 ，否则返回 -1
 */
 int InsertElem(SqList &L, int e, int p) {
-    if(p > L.length || p < 0)
+    if(p > L.length - 1 || p < 0)
         return -1;
 
     int i;
@@ -77,6 +77,23 @@ int InsertElem(SqList &L, int e, int p) {
     L.data[p] = e;
     ++(L.length);//别忘记插入元素后，表长要加1
     return 1;
+}
+
+/*
+删除下标 为 p 的元素
+*/
+int DeleteElem(SqList &L, int p, int &e){
+	int i;
+	if(p > L.length - 1 || p < 0){
+		return -1;
+	}
+	e = L.data[p];
+	for(int i = p; i < L.length ; ++i)
+	{
+		L.data[i] = L.data[i+1];
+	}
+	--(L.length);
+	return 1;
 }
 
 void mergeSqList(LNode *A, LNode *B, LNode*&C) {
@@ -169,10 +186,16 @@ int main() {
     insertElem(sq1, 1);
     PrintSqList(sq1);
 
-    cout << "\nInsert the Element 100 in postion 1" << endl;
+    cout << "\nInsert the Element 100 in position 1" << endl;
 
     cout << "\nThe result is:" << InsertElem(sq1, 100, 1) << endl;
     PrintSqList(sq1);
 	
-	cout <<"\n Hello, This is from Command Line" << endl;
+	cout <<"\nHello, This is from Command Line" << endl;
+	
+	int deleteEle;
+	DeleteElem(sq1,2,deleteEle);
+	
+	cout<< deleteEle << endl;
+	PrintSqList(sq1);
 }
