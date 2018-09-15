@@ -173,4 +173,6 @@ int main() {
 
     cout << "\nThe result is:" << InsertElem(sq1, 100, 1) << endl;
     PrintSqList(sq1);
+	
+	cout <<"\n Hello, This is from Command Line" << endl;
 }
