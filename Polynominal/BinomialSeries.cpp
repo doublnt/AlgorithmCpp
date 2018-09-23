@@ -13,6 +13,11 @@ typedef struct Binomial {
     int length;
 } Binomial;
 
+typedef struct BinomialMatrix {
+    string element[maxSize];
+    int length;
+} BinomialMatrix;
+
 void CreateBinomial(Binomial &binomial, char a[], int length) {
     int i;
 
@@ -31,56 +36,64 @@ void PrintBinomialValue(Binomial binomial) {
     cout << "\n" << endl;
 }
 
-void PrintBinoMatrix(string matrix[], int length) {
+void PrintBinoMatrix(BinomialMatrix matrix, int n) {
     int i;
     cout << "\n" << "The Result is :" << endl;
 
-    if(length == 0) {
-        cout << matrix[0] << endl;
+    if(matrix.length == 0) {
+        cout << matrix.element[0] << endl;
     } else {
-        for(i = 0; i < length; ++i) {
-            if(i == length - 1) {
-                cout << matrix[i] << endl;
+        for(i = 0; i < matrix.length + pow(2, n); ++i) {
+            if(i == matrix.length + pow(2, n) - 1) {
+                cout << matrix.element[i] << endl;
             } else {
-                cout << matrix[i] << "+";
+                cout << matrix.element[i] << "+";
             }
         }
     }
 }
 
-void CalculateExpression(Binomial binomial, string matrix[], string matrixTemp[], int n) {
-    int i, j, k = 0;
-    int tempN = n;
+void CalculateExpression(Binomial binomial, BinomialMatrix &matrix,
+                         BinomialMatrix &matrixTemp, int n) {
+    int i, j, k = 0, t = 0;
 
-	if( n == 0){
-		matrix[n] = "1";
-		return;
-	}
-
-    if(n == 1) {
-        matrix[k] = string(1, binomial.array[k]);
-        matrix[k + 1] = string(1, binomial.array[k + 1]);
-    } else if(n == 2) {
-        for(i = 0; i < n; ++i) {
-            for(j = 0; j < n; ++j) {
-                matrix[k++] = string(1, binomial.array[i]) + string(1, binomial.array[j]);
-            }
-        }
+    if(n == 0) {
+        matrix.element[n] = "1";
+        matrix.length = 1;
     }
-	for(i = 0; i < pow(2, n); ++i)
-	{
-		matrixTemp[i] = matrixTemp[i] + matrix[i];
-	}
-    CalculateExpression(binomial, matrix, matrixTemp, --n);
+
+    while(n >= 1) {
+        matrix.element[k] = string(1, binomial.array[k]);
+        matrix.element[k + 1] = string(1, binomial.array[k + 1]);
+        matrix.length = 2;
+
+        if(matrixTemp.length < 100) {
+            for(i = 0; i < matrix.length; ++i) {
+                for(j = 0; j < matrixTemp.length; ++j) {
+                    matrix.element[matrix.length + t] =
+                        matrix.element[i] + matrixTemp.element[j];
+                    ++t;
+                }
+            }
+			matrix.length = matrix.length + t;
+        }
+
+        if(n >= 2) {
+            CalculateExpression(binomial, matrixTemp, matrix, --n);
+        }
+
+        --n;
+    }
 }
 
 int main() {
     int n;
     char a[] = "ab";
-    string matrix[maxSize];
-	string matrixTemp[maxSize];
-
     Binomial bino;
+
+    BinomialMatrix matrix;
+    BinomialMatrix matrixTemp;
+
     CreateBinomial(bino, a, 2);
 
     cout << "Please input the a and b to calculate the (a+b)^n expression!" << endl;
@@ -97,7 +110,6 @@ int main() {
         return 0;
     }
 
-    CalculateExpression(bino, matrix,matrixTemp, n);
-
-	PrintBinoMatrix(matrixTemp,pow(2,n));
+    CalculateExpression(bino, matrix, matrixTemp, n);
+    PrintBinoMatrix(matrix, n);
 }
