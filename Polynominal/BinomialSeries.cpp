@@ -40,7 +40,8 @@ void PrintBinoMatrix(BinomialMatrix matrix, int n) {
     int i;
     cout << "\n" << "The Result is :" << endl;
 
-	int loopStart = matrix.length <= 2 ? 0 : 2;
+    int loopStart = matrix.length <= 2 ? 0 : 2;
+
     for(i = loopStart; i < matrix.length; ++i) {
         if(i == matrix.length - 1) {
             cout << matrix.element[i] << endl;
@@ -57,7 +58,7 @@ void CalculateExpression(Binomial binomial, BinomialMatrix &matrix,
     if(n == 0) {
         matrix.element[n] = "1";
         matrix.length = 1;
-		return;
+        return;
     }
 
     matrix.element[k] = string(1, binomial.array[k]);
@@ -84,39 +85,33 @@ void CalculateExpression(Binomial binomial, BinomialMatrix &matrix,
 
 int main() {
     int n;
-	int r = 1;
     char a[] = "ab";
-    Binomial bino;
 
+    Binomial bino;
     BinomialMatrix matrix;
     BinomialMatrix matrixTemp;
-	
-	while(r == 1){
-		CreateBinomial(bino, a, 2);
 
-		cout << "Please input the a and b to calculate the (a+b)^n expression!" << endl;
-		cout << "Give me the value of n" << endl;
-		
-		while(!(cin >> n)) {
-			cin.clear();
-			cin.ignore(numeric_limits<streamsize>::max(), '\n');
-			cout << "\nPlease type a number n:\t";
-		}
+    CreateBinomial(bino, a, 2);
 
-		if(n < 0 || n > maxSize) {
-			cout << "The number you input is invalid!" << endl;
-			return 0;
-		}
+    cout << "Please input the a and b to calculate the (a+b)^n expression!" << endl;
+    cout << "Give me the value of n" << endl;
 
-		CalculateExpression(bino, matrix, matrixTemp, n);
+    while(!(cin >> n)) {
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cout << "\nPlease type a number n:\t";
+    }
 
-		if(matrix.length < 2 || matrix.length > matrixTemp.length) {
-			PrintBinoMatrix(matrix, n);
-		} else {
-			PrintBinoMatrix(matrixTemp, n);
-		}
-		
-		cout << "\n \nTo repeat press 1, to exit press any other number:\t";
-		cin >> r;
-	}
+    if(n < 0 || n > maxSize) {
+        cout << "The number you input is invalid!" << endl;
+        return 0;
+    }
+
+    CalculateExpression(bino, matrix, matrixTemp, n);
+
+    if(matrix.length >= matrixTemp.length) {
+        PrintBinoMatrix(matrix, n);
+    } else {
+        PrintBinoMatrix(matrixTemp, n);
+    }
 }
