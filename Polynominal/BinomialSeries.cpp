@@ -40,76 +40,83 @@ void PrintBinoMatrix(BinomialMatrix matrix, int n) {
     int i;
     cout << "\n" << "The Result is :" << endl;
 
-    if(matrix.length == 0) {
-        cout << matrix.element[0] << endl;
-    } else {
-        for(i = 0; i < matrix.length + pow(2, n); ++i) {
-            if(i == matrix.length + pow(2, n) - 1) {
-                cout << matrix.element[i] << endl;
-            } else {
-                cout << matrix.element[i] << "+";
-            }
+	int loopStart = matrix.length <= 2 ? 0 : 2;
+    for(i = loopStart; i < matrix.length; ++i) {
+        if(i == matrix.length - 1) {
+            cout << matrix.element[i] << endl;
+        } else {
+            cout << matrix.element[i] << "+";
         }
     }
 }
 
 void CalculateExpression(Binomial binomial, BinomialMatrix &matrix,
                          BinomialMatrix &matrixTemp, int n) {
-    int i, j, k = 0, t = 0;
+    int i, j, k = 0, t = 0, p = 0;
 
     if(n == 0) {
         matrix.element[n] = "1";
         matrix.length = 1;
+		return;
     }
 
-    while(n >= 1) {
-        matrix.element[k] = string(1, binomial.array[k]);
-        matrix.element[k + 1] = string(1, binomial.array[k + 1]);
-        matrix.length = 2;
+    matrix.element[k] = string(1, binomial.array[k]);
+    matrix.element[k + 1] = string(1, binomial.array[k + 1]);
+    matrix.length = 2;
 
-        if(matrixTemp.length < 100) {
-            for(i = 0; i < matrix.length; ++i) {
-                for(j = 0; j < matrixTemp.length; ++j) {
-                    matrix.element[matrix.length + t] =
-                        matrix.element[i] + matrixTemp.element[j];
-                    ++t;
-                }
+    int loopLength = matrixTemp.length - matrix.length > 0 ? matrix.length : 0;
+
+    if(matrixTemp.length < 10000) {
+        for(i = 0; i < matrix.length; ++i) {
+            for(j = loopLength; j < matrixTemp.length; ++j) {
+                matrix.element[matrix.length + t] = matrix.element[i] + matrixTemp.element[j];
+                ++t;
             }
-			matrix.length = matrix.length + t;
         }
 
-        if(n >= 2) {
-            CalculateExpression(binomial, matrixTemp, matrix, --n);
-        }
+        matrix.length = matrix.length + t;
+    }
 
-        --n;
+    if(n >= 2) {
+        CalculateExpression(binomial, matrixTemp, matrix, --n);
     }
 }
 
 int main() {
     int n;
+	int r = 1;
     char a[] = "ab";
     Binomial bino;
 
     BinomialMatrix matrix;
     BinomialMatrix matrixTemp;
+	
+	while(r == 1){
+		CreateBinomial(bino, a, 2);
 
-    CreateBinomial(bino, a, 2);
+		cout << "Please input the a and b to calculate the (a+b)^n expression!" << endl;
+		cout << "Give me the value of n" << endl;
+		
+		while(!(cin >> n)) {
+			cin.clear();
+			cin.ignore(numeric_limits<streamsize>::max(), '\n');
+			cout << "\nPlease type a number n:\t";
+		}
 
-    cout << "Please input the a and b to calculate the (a+b)^n expression!" << endl;
-    cout << "Give me the value of n" << endl;
+		if(n < 0 || n > maxSize) {
+			cout << "The number you input is invalid!" << endl;
+			return 0;
+		}
 
-    while(!(cin >> n)) {
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        cout << "\nPlease type a number n:\t";
-    }
+		CalculateExpression(bino, matrix, matrixTemp, n);
 
-    if(n < 0 || n > maxSize) {
-        cout << "The number you input is invalid!" << endl;
-        return 0;
-    }
-
-    CalculateExpression(bino, matrix, matrixTemp, n);
-    PrintBinoMatrix(matrix, n);
+		if(matrix.length < 2 || matrix.length > matrixTemp.length) {
+			PrintBinoMatrix(matrix, n);
+		} else {
+			PrintBinoMatrix(matrixTemp, n);
+		}
+		
+		cout << "\n \nTo repeat press 1, to exit press any other number:\t";
+		cin >> r;
+	}
 }
