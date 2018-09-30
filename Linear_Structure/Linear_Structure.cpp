@@ -1,4 +1,5 @@
 #include<iostream>
+#include "stdlib.h"
 #define maxSize 100
 #define NotFound -1
 
@@ -174,8 +175,61 @@ void PrintSqList(SqList s) {
     }
 }
 
+// 尾插法建立单链表
+void CreateListR(LNode *&C, int a[], int n)
+{
+	LNode *s, *r;
+	int i;
+	C = (LNode *)malloc(sizeof(LNode));
+	C -> next = NULL;
+	
+	r = C;
+	
+	for(i = 0; i < n; ++i)
+	{
+		s = (LNode *)malloc(sizeof(LNode));
+		s -> data = a[i];
+		
+		r -> next = s;
+		r = r -> next;
+	}
+	r -> next = NULL;
+}
+
+// 头插法建立单链表
+void CreateListF(LNode *&C, int a[], int n)
+{
+	LNode *s;
+	int i;
+	C = (LNode *)malloc(sizeof(LNode));
+	C -> next = NULL;
+	
+	for(i = 0; i < n; ++i)
+	{
+		s = (LNode *)malloc(sizeof(LNode));
+		s -> data = a[i];
+		
+		s -> next = C -> next;
+		C -> next = s;
+	}
+}
+
+void PrintLNodeList(LNode *C)
+{
+	C = C -> next;
+	while(C != NULL)
+	{
+		cout << C ->data << "\t";
+		C = C -> next;
+	}
+	cout << endl;
+}
+
 int main() {
     int a[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+	
+	#pragma region SqList
+	/*
     SqList sq1;
 
     CreateSqList(sq1, a, 9);
@@ -198,4 +252,16 @@ int main() {
 	
 	cout<< deleteEle << endl;
 	PrintSqList(sq1);
+	*/
+	#pragma endregion
+	
+	cout << "Create LNode..." <<endl;
+	
+	LNode *AF,*AR;
+	
+	CreateListF(AF, a, 9); //头插法
+	CreateListR(AR, a, 9); //尾插法
+	
+	PrintLNodeList(AF);
+	PrintLNodeList(AR);
 }
